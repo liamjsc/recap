@@ -37,21 +37,34 @@ export interface NBAGamesResponse {
 
 /**
  * NBA Schedule API Service (balldontlie.io)
- * Free API, no authentication required
+ * Requires API key authentication (get free key at app.balldontlie.io)
  */
 export const nbaService = {
+  /**
+   * Get headers for API requests (with optional auth)
+   */
+  getHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (env.nbaApiKey) {
+      headers['Authorization'] = env.nbaApiKey;
+    }
+    return headers;
+  },
+
   /**
    * Get games for a specific date range
    */
   async getGamesByDateRange(startDate: string, endDate: string): Promise<NBAGame[]> {
     const params = new URLSearchParams({
-      'dates[]': startDate,
+      start_date: startDate,
       end_date: endDate,
       per_page: '100',
     });
 
     const url = `${env.nbaApiUrl}/games?${params}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: this.getHeaders() });
 
     if (!response.ok) {
       throw new Error(`NBA API error: ${response.statusText}`);
@@ -82,7 +95,7 @@ export const nbaService = {
     }
 
     const url = `${env.nbaApiUrl}/games?${params}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: this.getHeaders() });
 
     if (!response.ok) {
       throw new Error(`NBA API error: ${response.statusText}`);
@@ -97,7 +110,7 @@ export const nbaService = {
    */
   async getAllTeams(): Promise<NBATeam[]> {
     const url = `${env.nbaApiUrl}/teams?per_page=30`;
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: this.getHeaders() });
 
     if (!response.ok) {
       throw new Error(`NBA API error: ${response.statusText}`);
@@ -112,7 +125,7 @@ export const nbaService = {
    */
   async getTeamById(teamId: number): Promise<NBATeam | null> {
     const url = `${env.nbaApiUrl}/teams/${teamId}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: this.getHeaders() });
 
     if (!response.ok) {
       if (response.status === 404) {

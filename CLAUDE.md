@@ -79,7 +79,8 @@ PORT=3001
 DATABASE_URL=postgresql://...           # Neon connection string (configured)
 ADMIN_API_KEY=dev-admin-key-12345      # For admin endpoints
 YOUTUBE_API_KEY=AIzaSy...              # YouTube Data API v3 (configured)
-NBA_API_URL=https://www.balldontlie.io/api/v1
+NBA_API_URL=https://api.balldontlie.io/v1
+NBA_API_KEY=your_key_here              # Get free key at app.balldontlie.io
 CORS_ORIGINS=http://localhost:5173
 LOG_LEVEL=debug
 ```
@@ -149,14 +150,15 @@ VITE_ENABLE_EMBED=true
   - Layout with header navigation, mobile menu, team search
   - User preferences (localStorage) for recent teams
 
-### 🚧 In Progress
-- [ ] **Phase 6**: Vercel deployment
-  - vercel.json configured for frontend
-  - Backend needs separate deployment (Railway/Render recommended)
-  - Set VITE_API_URL env var to backend URL in Vercel
+### ✅ Completed (continued)
+- [x] **Phase 6**: Vercel deployment
+  - Full-stack deployed to https://recap-ebon.vercel.app
+  - Frontend served from root, backend API via serverless functions
+  - Environment variables configured in Vercel dashboard
 
 ### ⏳ Pending
 - [ ] **Phase 7**: Monitoring & operations
+- [ ] NBA API key setup (get free key at app.balldontlie.io)
 
 ## Current State
 
@@ -199,7 +201,7 @@ Detailed task breakdowns are in `./claude/prd/tasks/phase-X/###-task_slug.md`
 - Use repositories from `src/db/repositories` for all database operations
 - Admin routes require `X-Admin-API-Key` header matching `ADMIN_API_KEY` env var
 - YouTube API key is configured and working
-- balldontlie.io requires no authentication
+- balldontlie.io requires API key (get free at app.balldontlie.io)
 
 ## Code Style Preferences
 - **Prefer functional patterns over imperative loops**: Use `.forEach()`, `.map()`, `.filter()`, `.reduce()` instead of `for...of` or `for` loops

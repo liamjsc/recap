@@ -9,6 +9,7 @@ interface EnvConfig {
   databaseUrl: string;
   youtubeApiKey: string;
   nbaApiUrl: string;
+  nbaApiKey: string;
   adminApiKey: string;
   corsOrigins: string[];
   logLevel: string;
@@ -54,7 +55,8 @@ function validateEnv(): EnvConfig {
     nodeEnv,
     databaseUrl: getEnvString('DATABASE_URL', ''),
     youtubeApiKey: getEnvString('YOUTUBE_API_KEY', ''),
-    nbaApiUrl: getEnvString('NBA_API_URL', 'https://www.balldontlie.io/api/v1'),
+    nbaApiUrl: getEnvString('NBA_API_URL', 'https://api.balldontlie.io/v1'),
+    nbaApiKey: getEnvString('NBA_API_KEY', ''),
     adminApiKey: getEnvString('ADMIN_API_KEY', 'dev-admin-key'),
     corsOrigins: getEnvString('CORS_ORIGINS', 'http://localhost:5173').split(','),
     logLevel: getEnvString('LOG_LEVEL', 'debug'),
