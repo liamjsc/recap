@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { teamsRepository } from '../../db/repositories';
-import { gamesRepository } from '../../db/repositories';
+import { teamsRepository, gamesRepository, videosRepository } from '../../db/repositories';
 import { NotFoundError } from '../../middleware/errorHandler';
-import type { TeamResponse, TeamBriefResponse, GameResponse } from '../../types';
+import type { TeamResponse, TeamBriefResponse, GameResponse, VideoResponse } from '../../types';
 
 const router = Router();
 
@@ -20,6 +19,18 @@ const mapTeamToBrief = (team: any): TeamBriefResponse => ({
   id: team.id,
   name: team.name,
   abbreviation: team.abbreviation,
+});
+
+// Helper to map video to response
+const mapVideoToResponse = (video: any): VideoResponse => ({
+  id: video.id,
+  youtubeVideoId: video.youtubeVideoId,
+  title: video.title,
+  thumbnailUrl: video.thumbnailUrl,
+  durationSeconds: video.durationSeconds,
+  channelName: video.channelName,
+  isVerified: video.isVerified,
+  url: video.url,
 });
 
 // GET /api/teams - List all teams
@@ -84,7 +95,18 @@ router.get('/:id/games', async (req, res, next) => {
     const limit = parseInt(req.query.limit as string, 10) || 50;
     const games = await gamesRepository.findByTeamId(id, limit);
 
-    const response: GameResponse[] = games.map((game) => ({
+    // Fetch videos for games
+    const gamesWithVideos = await Promise.all(
+      games.map(async (game) => {
+        const video = await videosRepository.findByGameId(game.id);
+        return {
+          ...game,
+          video,
+        };
+      })
+    );
+
+    const response: GameResponse[] = gamesWithVideos.map((game) => ({
       id: game.id,
       gameDate: new Date(game.gameDate).toISOString().split('T')[0]!,
       gameTime: game.gameTime ? game.gameTime.toISOString() : null,
@@ -93,7 +115,7 @@ router.get('/:id/games', async (req, res, next) => {
       awayTeam: mapTeamToBrief(game.awayTeam),
       homeScore: game.homeScore,
       awayScore: game.awayScore,
-      video: null,
+      video: game.video ? mapVideoToResponse(game.video) : null,
     }));
 
     res.json(response);

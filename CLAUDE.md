@@ -206,3 +206,21 @@ Detailed task breakdowns are in `./claude/prd/tasks/phase-X/###-task_slug.md`
 ## Code Style Preferences
 - **Prefer functional patterns over imperative loops**: Use `.forEach()`, `.map()`, `.filter()`, `.reduce()` instead of `for...of` or `for` loops
 - API responses return arrays directly (e.g., `GET /api/teams` returns `Team[]`, not `{ teams: Team[] }`)
+
+## Deployment
+
+### Auto-deploy via Git
+The app is deployed to Vercel at https://recap-ebon.vercel.app. Pushing to `master` triggers automatic deployment.
+
+### Agent Responsibilities
+When making code changes:
+1. Run `npm run typecheck` in both `frontend/` and `backend/` to verify changes
+2. Commit changes with descriptive messages
+3. Push to `master` to deploy
+
+### Commit Convention
+Use conventional commit messages:
+- `fix:` for bug fixes
+- `feat:` for new features
+- `refactor:` for code improvements
+- `docs:` for documentation updates
