@@ -13,7 +13,9 @@
     "migrate:down": "node-pg-migrate down",
     "migrate:create": "node-pg-migrate create",
     "db:seed": "ts-node src/db/seed.ts",
-    "db:test": "ts-node src/db/test-connection.ts"
+    "db:test": "ts-node src/db/test-connection.ts",
+    "sync:schedule": "ts-node src/scripts/sync-schedule.ts",
+    "sync:videos": "ts-node src/scripts/discover-videos.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
