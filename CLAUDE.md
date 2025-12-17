@@ -141,21 +141,21 @@ VITE_ENABLE_EMBED=true
   - Video discovery service with verified channel detection
   - Schedule sync service with date range support
   - Admin endpoints for all sync operations
+- [x] **Phase 4**: Automated cron jobs (SKIPPED - using manual sync scripts)
+- [x] **Phase 5**: Frontend UI implementation
+  - HomePage with team grid and date picker
+  - TeamPage with game list and video thumbnails
+  - DatePage with game list and date navigation
+  - Layout with header navigation, mobile menu, team search
+  - User preferences (localStorage) for recent teams
 
 ### 🚧 In Progress
-- [ ] **Phase 4**: Automated cron jobs (SKIPPED - using manual sync scripts)
+- [ ] **Phase 6**: Vercel deployment
+  - vercel.json configured for frontend
+  - Backend needs separate deployment (Railway/Render recommended)
+  - Set VITE_API_URL env var to backend URL in Vercel
 
 ### ⏳ Pending
-- [ ] **Phase 5**: Frontend UI implementation
-  - Home page with recent games
-  - Team page with schedule
-  - Date page with games by date
-  - Video embed component
-  - Navigation and layout
-- [ ] **Phase 6**: Vercel deployment
-  - Frontend deployment
-  - Backend API deployment
-  - Environment configuration
 - [ ] **Phase 7**: Monitoring & operations
 
 ## Current State
@@ -173,8 +173,10 @@ VITE_ENABLE_EMBED=true
 - ✅ NBA schedule API integrated
 
 ### Frontend
-- ⚠️ Boilerplate created but NOT implemented
-- ⚠️ Needs component development
+- ✅ All pages implemented (Home, Team, Date)
+- ✅ Components: Hero, TeamGrid, TeamCard, DatePicker, GameCard, VideoThumbnail
+- ✅ Navigation with mobile menu and team search
+- ✅ User preferences stored in localStorage
 
 ## Quick Start for New Agents
 
@@ -198,3 +200,7 @@ Detailed task breakdowns are in `./claude/prd/tasks/phase-X/###-task_slug.md`
 - Admin routes require `X-Admin-API-Key` header matching `ADMIN_API_KEY` env var
 - YouTube API key is configured and working
 - balldontlie.io requires no authentication
+
+## Code Style Preferences
+- **Prefer functional patterns over imperative loops**: Use `.forEach()`, `.map()`, `.filter()`, `.reduce()` instead of `for...of` or `for` loops
+- API responses return arrays directly (e.g., `GET /api/teams` returns `Team[]`, not `{ teams: Team[] }`)

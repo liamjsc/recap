@@ -31,18 +31,14 @@ export function TeamGrid({ onTeamSelect }: Props) {
   const filteredTeams = filter === 'all'
     ? teams
     : teams.filter(t => t.conference === filter);
-    if (filteredTeams?.length === undefined) {
-      debugger;;
-    }
 
   const divisions: Record<string, Team[]> = {};
-  filteredTeams.map(team => {
+  filteredTeams.forEach(team => {
     const div = team.division;
     if (!divisions[div]) {
       divisions[div] = [];
     }
     divisions[div].push(team);
-    return null;
   });
 
   if (loading) {
