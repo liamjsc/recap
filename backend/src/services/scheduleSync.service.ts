@@ -89,7 +89,10 @@ export const scheduleSyncService = {
     // Check if game already exists by external ID
     const existingGame = await gamesRepository.findByExternalId(nbaGame.id.toString());
 
-    const gameDate = new Date(nbaGame.date);
+    // Parse date as local midnight to avoid timezone shifts
+    // nbaGame.date is "YYYY-MM-DD" format
+    const [year, month, day] = nbaGame.date.split('-').map(Number);
+    const gameDate = new Date(year!, month! - 1, day!);
     const status = nbaService.mapGameStatus(nbaGame);
 
     if (existingGame) {

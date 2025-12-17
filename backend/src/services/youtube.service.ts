@@ -56,8 +56,13 @@ export const youtubeService = {
       throw new Error('YouTube API key not configured');
     }
 
-    // Build search query
-    const query = `${homeTeam} vs ${awayTeam} highlights ${gameDate}`;
+    // Format date for search (e.g., "December 2025" or "Dec 16")
+    const date = new Date(gameDate);
+    const monthName = date.toLocaleString('en-US', { month: 'long' });
+    const year = date.getFullYear();
+
+    // Build search query - use flexible format that matches YouTube video titles
+    const query = `${homeTeam} ${awayTeam} highlights ${monthName} ${year}`;
 
     const searchParams = new URLSearchParams({
       part: 'snippet',
@@ -65,7 +70,6 @@ export const youtubeService = {
       type: 'video',
       maxResults: maxResults.toString(),
       order: 'relevance',
-      videoDuration: 'medium', // 4-20 minutes
       videoEmbeddable: 'true',
       key: env.youtubeApiKey,
     });
