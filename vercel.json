@@ -17,6 +17,6 @@
     { "src": "/api/(.*)", "dest": "/backend/api/index.ts" },
     { "src": "/health", "dest": "/backend/api/index.ts" },
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/frontend/$1" }
+    { "src": "/(.*)", "dest": "/frontend/index.html" }
   ]
 }
