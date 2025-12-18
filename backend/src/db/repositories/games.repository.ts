@@ -151,7 +151,7 @@ export const gamesRepository = {
   },
 
   /**
-   * Find games by team ID
+   * Find games by team ID (only finished games, no future dates)
    */
   async findByTeamId(teamId: number, limit = 50): Promise<GameWithTeams[]> {
     const result = await db.query<GameWithTeams>(
@@ -165,7 +165,9 @@ export const gamesRepository = {
        FROM games g
        JOIN teams ht ON g.home_team_id = ht.id
        JOIN teams at ON g.away_team_id = at.id
-       WHERE g.home_team_id = $1 OR g.away_team_id = $1
+       WHERE (g.home_team_id = $1 OR g.away_team_id = $1)
+         AND g.status = 'finished'
+         AND g.game_date <= CURRENT_DATE
        ORDER BY g.game_date DESC, g.game_time DESC
        LIMIT $2`,
       [teamId, limit]
