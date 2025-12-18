@@ -210,7 +210,11 @@ Detailed task breakdowns are in `./claude/prd/tasks/phase-X/###-task_slug.md`
 ## Deployment
 
 ### Auto-deploy via Git
-The app is deployed to Vercel at https://recap-ebon.vercel.app. Pushing to `master` triggers automatic deployment.
+The app is deployed to Vercel at https://recap-ebon.vercel.app. Run `vercel --prod` to deploy (git push doesn't auto-deploy).
+
+### Vercel Config
+- Frontend: Vite build from `frontend/` to `frontend/dist`
+- Backend: Serverless function at `api/index.ts` that imports `backend/src/app`
 
 ### Agent Responsibilities
 When making code changes:
