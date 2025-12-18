@@ -32,14 +32,12 @@ router.get('/', async (req, res, next) => {
     let games;
 
     if (date) {
-      // Single date
-      const targetDate = new Date(date as string);
-      if (isNaN(targetDate.getTime())) {
-        throw new BadRequestError('Invalid date format');
+      // Single date - use string-based date comparison to avoid timezone issues
+      const dateStr = date as string;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        throw new BadRequestError('Invalid date format. Use YYYY-MM-DD');
       }
-      const nextDay = new Date(targetDate);
-      nextDay.setDate(nextDay.getDate() + 1);
-      games = await gamesRepository.findByDateRange(targetDate, nextDay);
+      games = await gamesRepository.findByDate(dateStr);
     } else if (startDate && endDate) {
       // Date range
       const start = new Date(startDate as string);
@@ -49,9 +47,9 @@ router.get('/', async (req, res, next) => {
       }
       games = await gamesRepository.findByDateRange(start, end);
     } else {
-      // No filters - get recent games
-      const limit = parseInt(req.query.limit as string, 10) || 100;
-      games = await gamesRepository.findAll(limit, 0);
+      // No filters - get recent finished games (excludes future scheduled games)
+      const limit = parseInt(req.query.limit as string, 10) || 50;
+      games = await gamesRepository.findRecentFinished(limit);
     }
 
     // Fetch videos for games

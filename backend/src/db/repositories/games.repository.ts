@@ -107,6 +107,28 @@ export const gamesRepository = {
   },
 
   /**
+   * Find games by a specific date (using date-only comparison to avoid timezone issues)
+   */
+  async findByDate(dateStr: string): Promise<GameWithTeams[]> {
+    const result = await db.query<GameWithTeams>(
+      `SELECT
+        g.id, g.external_id as "externalId", g.game_date as "gameDate",
+        g.game_time as "gameTime", g.status, g.home_score as "homeScore",
+        g.away_score as "awayScore", g.created_at as "createdAt", g.updated_at as "updatedAt",
+        g.home_team_id as "homeTeamId", g.away_team_id as "awayTeamId",
+        jsonb_build_object('id', ht.id, 'name', ht.name, 'abbreviation', ht.abbreviation) as "homeTeam",
+        jsonb_build_object('id', at.id, 'name', at.name, 'abbreviation', at.abbreviation) as "awayTeam"
+       FROM games g
+       JOIN teams ht ON g.home_team_id = ht.id
+       JOIN teams at ON g.away_team_id = at.id
+       WHERE g.game_date::date = $1::date
+       ORDER BY g.game_time ASC NULLS LAST`,
+      [dateStr]
+    );
+    return result.rows;
+  },
+
+  /**
    * Find games by date range
    */
   async findByDateRange(startDate: Date, endDate: Date): Promise<GameWithTeams[]> {
@@ -170,6 +192,30 @@ export const gamesRepository = {
        ORDER BY g.game_date DESC, g.game_time DESC
        LIMIT $2`,
       [status, limit]
+    );
+    return result.rows;
+  },
+
+  /**
+   * Find recent finished games (for home page - excludes future scheduled games)
+   */
+  async findRecentFinished(limit = 50): Promise<GameWithTeams[]> {
+    const result = await db.query<GameWithTeams>(
+      `SELECT
+        g.id, g.external_id as "externalId", g.game_date as "gameDate",
+        g.game_time as "gameTime", g.status, g.home_score as "homeScore",
+        g.away_score as "awayScore", g.created_at as "createdAt", g.updated_at as "updatedAt",
+        g.home_team_id as "homeTeamId", g.away_team_id as "awayTeamId",
+        jsonb_build_object('id', ht.id, 'name', ht.name, 'abbreviation', ht.abbreviation) as "homeTeam",
+        jsonb_build_object('id', at.id, 'name', at.name, 'abbreviation', at.abbreviation) as "awayTeam"
+       FROM games g
+       JOIN teams ht ON g.home_team_id = ht.id
+       JOIN teams at ON g.away_team_id = at.id
+       WHERE g.status = 'finished'
+         AND g.game_date <= CURRENT_DATE
+       ORDER BY g.game_date DESC, g.game_time DESC
+       LIMIT $1`,
+      [limit]
     );
     return result.rows;
   },
