@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { VideoThumbnail } from '../components/VideoThumbnail';
 import { usePreferences } from '../hooks/usePreferences';
@@ -7,12 +8,49 @@ import { groupGamesByDate, formatDateHeading } from '../hooks/useRecentGames';
 import { apiClient } from '../api/client';
 import { Game, Team } from '../types';
 
+// Parse filter from URL search params
+function parseFilterFromParams(params: URLSearchParams): GameFilter {
+  const teamParam = params.get('team');
+  const dateParam = params.get('date');
+
+  if (teamParam) {
+    return { type: 'team', abbreviation: teamParam.toUpperCase() };
+  }
+  if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+    return { type: 'date', date: dateParam };
+  }
+  return { type: 'recent' };
+}
+
+// Convert filter to URL search params
+function filterToParams(filter: GameFilter): URLSearchParams {
+  const params = new URLSearchParams();
+  if (filter.type === 'team') {
+    params.set('team', filter.abbreviation.toLowerCase());
+  } else if (filter.type === 'date') {
+    params.set('date', filter.date);
+  }
+  return params;
+}
+
 export function HomePage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { preferences, setLastVisitedTeam } = usePreferences();
-  const [filter, setFilter] = useState<GameFilter>({ type: 'recent' });
+  const [filter, setFilterState] = useState<GameFilter>(() =>
+    parseFilterFromParams(searchParams)
+  );
   const { games, team, loading, error } = useFilteredGames(filter);
   const [teams, setTeams] = useState<Team[]>([]);
   const [teamsLoading, setTeamsLoading] = useState(true);
+
+  // Sync filter state with URL
+  const setFilter = useCallback(
+    (newFilter: GameFilter) => {
+      setFilterState(newFilter);
+      setSearchParams(filterToParams(newFilter), { replace: true });
+    },
+    [setSearchParams]
+  );
 
   // Load teams for dropdown
   useEffect(() => {
