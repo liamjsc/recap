@@ -1,18 +1,22 @@
 const STORAGE_KEY = 'nba-highlights-preferences';
 
+export interface TeamRef {
+  abbreviation: string;
+  name: string;
+}
+
 export interface UserPreferences {
-  lastVisitedTeam: {
-    abbreviation: string;
-    name: string;
-  } | null;
+  lastVisitedTeam: TeamRef | null;
   defaultBrowseMode: 'team' | 'date';
-  recentTeams: Array<{ abbreviation: string; name: string }>;
+  recentTeams: TeamRef[];
+  favoriteTeams: TeamRef[];
 }
 
 const defaultPreferences: UserPreferences = {
   lastVisitedTeam: null,
   defaultBrowseMode: 'team',
   recentTeams: [],
+  favoriteTeams: [],
 };
 
 export const storage = {
@@ -38,7 +42,7 @@ export const storage = {
     }
   },
 
-  setLastVisitedTeam(team: { abbreviation: string; name: string }): void {
+  setLastVisitedTeam(team: TeamRef): void {
     const prefs = this.getPreferences();
 
     prefs.lastVisitedTeam = team;
@@ -51,6 +55,28 @@ export const storage = {
     ].slice(0, 5);
 
     this.setPreferences(prefs);
+  },
+
+  toggleFavoriteTeam(team: TeamRef): void {
+    const prefs = this.getPreferences();
+    const isFavorite = prefs.favoriteTeams.some(
+      (t) => t.abbreviation === team.abbreviation
+    );
+
+    if (isFavorite) {
+      prefs.favoriteTeams = prefs.favoriteTeams.filter(
+        (t) => t.abbreviation !== team.abbreviation
+      );
+    } else {
+      prefs.favoriteTeams = [...prefs.favoriteTeams, team];
+    }
+
+    this.setPreferences(prefs);
+  },
+
+  isFavoriteTeam(abbreviation: string): boolean {
+    const prefs = this.getPreferences();
+    return prefs.favoriteTeams.some((t) => t.abbreviation === abbreviation);
   },
 
   clearPreferences(): void {
