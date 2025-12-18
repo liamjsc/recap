@@ -6,6 +6,8 @@
   "installCommand": "cd backend && npm install",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.ts" },
-    { "source": "/health", "destination": "/api/index.ts" }
+    { "source": "/health", "destination": "/api/index.ts" },
+    { "source": "/team/:path*", "destination": "/index.html" },
+    { "source": "/date/:path*", "destination": "/index.html" }
   ]
 }
