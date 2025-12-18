@@ -13,10 +13,9 @@
       }
     }
   ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/backend/api/index.ts" },
-    { "src": "/health", "dest": "/backend/api/index.ts" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/frontend/index.html" }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/backend/api/index.ts" },
+    { "source": "/health", "destination": "/backend/api/index.ts" },
+    { "source": "/:path*", "destination": "/index.html" }
   ]
 }
